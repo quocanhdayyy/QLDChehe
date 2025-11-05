@@ -18,28 +18,9 @@ const createAdminUser = async () => {
       console.log("Username:", existingAdmin.username);
       console.log("Role:", existingAdmin.role);
       console.log("Full Name:", existingAdmin.fullName);
-
-      // Hỏi có muốn reset password không
-      const readline = require("readline").createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      });
-
-      readline.question(
-        "Bạn có muốn reset mật khẩu thành 123456? (y/n): ",
-        async (answer) => {
-          if (answer.toLowerCase() === "y") {
-            const passwordHash = await bcrypt.hash("123456", 10);
-            existingAdmin.passwordHash = passwordHash;
-            await existingAdmin.save();
-            console.log("✅ Đã reset mật khẩu thành công!");
-          }
-          readline.close();
-          mongoose.connection.close();
-          process.exit(0);
-        }
-      );
-      return;
+      console.log("Nếu muốn reset password, chỉnh sửa script và chạy lại.");
+      mongoose.connection.close();
+      process.exit(0);
     }
 
     // Hash password
