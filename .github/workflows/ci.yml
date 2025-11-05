@@ -8,7 +8,11 @@ on:
 
 jobs:
   backend-tests:
-    runs-on: ubuntu-latest
+    # Use ubuntu-20.04 because some mongodb-memory-server binaries require libssl1.1
+    # which is available on 20.04 but missing on newer runners. This job starts
+    # a MongoDB service so tests can use a local Mongo instance instead of
+    # downloading a mongod binary that may fail on the runner.
+    runs-on: ubuntu-20.04
     defaults:
       run:
         working-directory: BE-QLDC
@@ -18,8 +22,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+      - name: Start MongoDB service
+        uses: supercharge/mongodb-github-action@1.5.7
+        with:
+          mongodb-version: '6.0'
+      - name: Wait for MongoDB
+        run: |
+          echo "Waiting for MongoDB to be ready..."
+          for i in {1..15}; do
+            nc -z localhost 27017 && break || sleep 1
+          done
       - name: Install backend deps
         run: npm ci
+      - name: Set test env
+        run: |
+          echo "MONGODB_ATLAS=mongodb://127.0.0.1:27017/ci_test" >> $GITHUB_ENV
+          echo "JWT_SECRET=test-secret" >> $GITHUB_ENV
       - name: Run backend tests
         run: npm test
 
