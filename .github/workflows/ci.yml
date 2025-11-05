@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: '18'
       - name: Start MongoDB service
-        uses: supercharge/mongodb-github-action@1.5.7
+        uses: supercharge/mongodb-github-action@1.11.0
         with:
           mongodb-version: '6.0'
       - name: Wait for MongoDB
