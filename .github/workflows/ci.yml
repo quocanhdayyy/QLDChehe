@@ -8,11 +8,9 @@ on:
 
 jobs:
   backend-tests:
-    # Use ubuntu-20.04 because some mongodb-memory-server binaries require libssl1.1
-    # which is available on 20.04 but missing on newer runners. This job starts
-    # a MongoDB service so tests can use a local Mongo instance instead of
-    # downloading a mongod binary that may fail on the runner.
-    runs-on: ubuntu-20.04
+    # Use ubuntu-latest (ubuntu-22.04) with MongoDB service to avoid libcrypto issues
+    # The MongoDB service provides a local Mongo instance for tests
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: BE-QLDC
