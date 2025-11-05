@@ -4,9 +4,15 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 let mongoServer;
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  if (process.env.CI) {
+    // Use MongoDB service in CI
+    await mongoose.connect('mongodb://localhost:27017/test');
+  } else {
+    // Use MongoMemoryServer locally
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  }
 });
 
 afterAll(async () => {
